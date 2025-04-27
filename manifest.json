@@ -1,0 +1,25 @@
+{
+  "name": "Therapiehunde Ausbildung",
+  "short_name": "THA Campus",
+  "start_url": "https://sauerlandpfoten.de/campus/login",
+  "display": "standalone",
+  "background_color": "#0A111A",
+  "theme_color": "#13222F",
+  "orientation": "portrait",
+  "scope": "https://sauerlandpfoten.de/campus/",
+  "icons": [
+    {
+      "src": "https://i.imgur.com/hhxndh5.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://i.imgur.com/blTPIc4.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "launch_handler": {
+    "client_mode": "standalone"
+  }
+}
