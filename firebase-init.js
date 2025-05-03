@@ -48,7 +48,7 @@ async function initializeFirebase() {
                 // Handle authenticated user state here
             } else {
                 console.log("[LOG] User not authenticated, redirecting to login page.");
-                window.location.href = "/login"; // Redirect to login page if not authenticated
+                window.location.href = "campus/login"; // Redirect to login page if not authenticated
             }
         });
 
