@@ -89,5 +89,14 @@ window.addEventListener('beforeunload', () => {
   removeLoadingScreen();  // Ensure loading screen is removed on reload
 });
 
-// Start full logic 1 second after script load
-delay(1000).then(() => initAuthWithRetry());
+// Start full logic 500ms after script load, but ensure page is loaded first
+document.addEventListener("DOMContentLoaded", () => {
+  delay(500).then(() => {
+    initAuthWithRetry();
+  });
+});
+
+// Optionally, remove the loading screen immediately if possible (bypass delay)
+if (document.readyState === "complete") {
+  removeLoadingScreen();
+}
