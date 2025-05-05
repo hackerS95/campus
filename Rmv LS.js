@@ -1,25 +1,29 @@
 // firebase-init.js
 
-// Delay function
+// Delay function with logging
 function delay(ms) {
+  console.log(`Delaying for ${ms}ms...`);
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Function to remove the loading screen
+// Function to remove the loading screen with logging
 function removeLoadingScreen() {
   const loadingScreen = document.getElementById('loadingScreen');
   if (loadingScreen) {
+    console.log("Removing loading screen...");
     loadingScreen.style.display = 'none';
   }
 }
 
-// Function to initialize Firebase
+// Function to initialize Firebase with logging
 async function initializeFirebase() {
   try {
-    // Wait for 500ms before importing Firebase modules
-    await delay(500);
+    // Wait for 1 second before starting Firebase initialization
+    console.log("Waiting for 1 second before Firebase initialization...");
+    await delay(1000); // 1 second delay before starting
 
-    // Dynamically import Firebase modules
+    // Dynamically import Firebase modules with logging
+    console.log("Importing Firebase modules...");
     const { initializeApp } = await import('https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js');
     await delay(150); // Wait 150ms between imports
 
@@ -38,14 +42,17 @@ async function initializeFirebase() {
       measurementId: "G-BK0BTJ9EHD"
     };
 
+    console.log("Initializing Firebase...");
     // Initialize Firebase if not already done
     const app = initializeApp(firebaseConfig);
     const auth = getAuth();
 
-    // Wait for 1500ms before starting the authentication check
+    // Wait for 1500ms before starting the authentication check with logging
+    console.log("Waiting for 1500ms before checking auth state...");
     await delay(1500);
 
     // Check for authentication state
+    console.log("Checking auth state...");
     onAuthStateChanged(auth, user => {
       if (user) {
         console.log("Logged in as:", user.email || "No email");
@@ -60,7 +67,8 @@ async function initializeFirebase() {
   }
 }
 
-// Initialize Firebase after the page loads
-delay(500).then(() => {
+// Initialize Firebase after the page loads (1 second after page load)
+console.log("Starting Firebase initialization process...");
+delay(1000).then(() => {
   initializeFirebase();
 });
