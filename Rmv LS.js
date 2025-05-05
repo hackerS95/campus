@@ -74,7 +74,7 @@ async function initAuthWithRetry(maxRetries = 3) {
     if (result === "retry") {
       attempts++;
       console.warn(`[Auth] Retry ${attempts}/${maxRetries}`);
-      await delay(1000);
+      await delay(1000); // Retry after 1 second
     } else {
       removeLoadingScreen();
       return;
