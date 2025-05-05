@@ -17,11 +17,17 @@ let auth;
 
 async function loadAuthOnly() {
   try {
+    console.log("[Auth] Starting Firebase initialization...");
+
     const { initializeApp, getApps } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
     await delay(150);  // Delay between imports
 
+    console.log("[Auth] Firebase App module imported.");
+
     const { getAuth, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js");
     await delay(150);  // Delay between imports
+
+    console.log("[Auth] Firebase Auth module imported.");
 
     const firebaseConfig = {
       apiKey: "AIzaSyBCtaCFznyAuuRXa1NdYvuIJs4HZ171_6k",
@@ -34,20 +40,21 @@ async function loadAuthOnly() {
       measurementId: "G-BK0BTJ9EHD"
     };
 
-    // Initialize Firebase only if not already initialized
     if (!getApps().length) {
       initializeApp(firebaseConfig);
-      console.log("[Firebase] App initialized");
+      console.log("[Firebase] Firebase app initialized.");
     }
 
     auth = getAuth();
+
+    console.log("[Auth] Firebase auth initialized.");
 
     onAuthStateChanged(auth, user => {
       if (user) {
         console.log("[Auth] Logged in as:", user.email || "No Email");
         window.location.href = "/campus/campuswelcome";
       } else {
-        console.log("[Auth] No user, removing loading screen");
+        console.log("[Auth] No user, removing loading screen...");
         if (!loadingScreenRemoved) {
           removeLoadingScreen();
           loadingScreenRemoved = true;
@@ -57,15 +64,15 @@ async function loadAuthOnly() {
 
     return true;
   } catch (error) {
-    console.error("[Auth] Init failed:", error);
+    console.error("[Auth] Initialization failed:", error);
 
-    // If the error is a retryable error (e.g., u[v] or function errors)
+    // If the error is retryable (e.g., u[v] or function errors)
     if (error.message.includes("u[v]") || error.message.includes("is not a function")) {
-      console.warn("[Auth] u[v] error, will retry");
+      console.warn("[Auth] u[v] error, retrying...");
       return "retry";
     }
 
-    // If a non-specific error occurs, retry after 1 second
+    // Handle any other unexpected error
     console.warn("[Auth] Unknown error, retrying...");
     await delay(1000); // Retry after 1 second
     return "retry";
@@ -101,7 +108,7 @@ window.addEventListener('beforeunload', () => {
   removeLoadingScreen();  // Ensure loading screen is removed on reload
 });
 
-// Start full logic 500ms after script load, but ensure page is loaded first
+// Start full logic 500ms after script load
 document.addEventListener("DOMContentLoaded", () => {
   delay(500).then(() => {
     initAuthWithRetry();
