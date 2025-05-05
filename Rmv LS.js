@@ -10,6 +10,9 @@ function removeLoadingScreen() {
   }
 }
 
+// Track if loading screen has been removed
+let loadingScreenRemoved = false;
+
 let auth;
 
 async function loadAuthOnly() {
@@ -45,7 +48,10 @@ async function loadAuthOnly() {
         window.location.href = "/campus/campuswelcome";
       } else {
         console.log("[Auth] No user, removing loading screen");
-        removeLoadingScreen();
+        if (!loadingScreenRemoved) {
+          removeLoadingScreen();
+          loadingScreenRemoved = true;
+        }
       }
     });
 
@@ -76,12 +82,18 @@ async function initAuthWithRetry(maxRetries = 3) {
       console.warn(`[Auth] Retry ${attempts}/${maxRetries}`);
       await delay(1000); // Retry after 1 second
     } else {
-      removeLoadingScreen();
+      if (!loadingScreenRemoved) {
+        removeLoadingScreen();
+        loadingScreenRemoved = true;
+      }
       return;
     }
   }
   console.error("[Auth] Max retries reached");
-  removeLoadingScreen();
+  if (!loadingScreenRemoved) {
+    removeLoadingScreen();
+    loadingScreenRemoved = true;
+  }
 }
 
 // Ensure cleanup when page reloads or is refreshed
@@ -97,6 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Optionally, remove the loading screen immediately if possible (bypass delay)
-if (document.readyState === "complete") {
+if (document.readyState === "complete" && !loadingScreenRemoved) {
   removeLoadingScreen();
+  loadingScreenRemoved = true;
 }
