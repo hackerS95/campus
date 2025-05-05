@@ -31,6 +31,7 @@ async function loadAuthOnly() {
       measurementId: "G-BK0BTJ9EHD"
     };
 
+    // Initialize Firebase only if not already initialized
     if (!getApps().length) {
       initializeApp(firebaseConfig);
       console.log("[Firebase] App initialized");
@@ -66,11 +67,13 @@ async function loadAuthOnly() {
 }
 
 async function initAuthWithRetry(maxRetries = 3) {
-  for (let i = 1; i <= maxRetries; i++) {
+  let attempts = 0;
+  while (attempts < maxRetries) {
     const result = await loadAuthOnly();
     if (result === true) return;
     if (result === "retry") {
-      console.warn(`[Auth] Retry ${i}/${maxRetries}`);
+      attempts++;
+      console.warn(`[Auth] Retry ${attempts}/${maxRetries}`);
       await delay(1000);
     } else {
       removeLoadingScreen();
@@ -80,6 +83,11 @@ async function initAuthWithRetry(maxRetries = 3) {
   console.error("[Auth] Max retries reached");
   removeLoadingScreen();
 }
+
+// Ensure cleanup when page reloads or is refreshed
+window.addEventListener('beforeunload', () => {
+  removeLoadingScreen();  // Ensure loading screen is removed on reload
+});
 
 // Start full logic 1 second after script load
 delay(1000).then(() => initAuthWithRetry());
