@@ -15,9 +15,10 @@ let auth;
 async function loadAuthOnly() {
   try {
     const { initializeApp, getApps } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
-    await delay(150);
+    await delay(150);  // Delay between imports
 
     const { getAuth, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js");
+    await delay(150);  // Delay between imports
 
     const firebaseConfig = {
       apiKey: "AIzaSyBCtaCFznyAuuRXa1NdYvuIJs4HZ171_6k",
@@ -49,13 +50,18 @@ async function loadAuthOnly() {
 
     return true;
   } catch (error) {
+    console.error("[Auth] Init failed:", error);
+
+    // If the error is a retryable error (e.g., u[v] or function errors)
     if (error.message.includes("u[v]") || error.message.includes("is not a function")) {
       console.warn("[Auth] u[v] error, will retry");
       return "retry";
     }
 
-    console.error("[Auth] Init failed:", error);
-    return false;
+    // If a non-specific error occurs, retry after 1 second
+    console.warn("[Auth] Unknown error, retrying...");
+    await delay(1000); // Retry after 1 second
+    return "retry";
   }
 }
 
@@ -75,5 +81,5 @@ async function initAuthWithRetry(maxRetries = 3) {
   removeLoadingScreen();
 }
 
-// Start full logic 500ms after script load
-delay(500).then(() => initAuthWithRetry());
+// Start full logic 1 second after script load
+delay(1000).then(() => initAuthWithRetry());
